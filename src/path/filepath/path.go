@@ -13,6 +13,7 @@ package filepath
 
 import (
 	"errors"
+	"internal/safefilepath"
 	"io/fs"
 	"os"
 	"runtime"
@@ -680,4 +681,8 @@ func Dir(path string) string {
 // On other platforms it returns "".
 func VolumeName(path string) string {
 	return FromSlash(path[:volumeNameLen(path)])
+}
+
+func Localize(path string) (string, error) {
+	return safefilepath.FromFS(path)
 }
