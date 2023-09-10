@@ -937,7 +937,7 @@ func (pr *pkgReader) objDictIdx(sym *types.Sym, idx pkgbits.Index, implicits, ex
 	dict.derived = make([]derivedInfo, r.Len())
 	dict.derivedTypes = make([]*types.Type, len(dict.derived))
 	for i := range dict.derived {
-		dict.derived[i] = derivedInfo{r.Reloc(pkgbits.RelocType), r.Bool()}
+		dict.derived[i] = derivedInfo{r.Reloc(pkgbits.RelocType)}
 	}
 
 	// Runtime dictionary information; private to the compiler.

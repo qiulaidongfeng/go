@@ -225,8 +225,7 @@ func (dict *writerDict) typeParamIndex(typ *types2.TypeParam) int {
 
 // A derivedInfo represents a reference to an encoded generic Go type.
 type derivedInfo struct {
-	idx    pkgbits.Index
-	needed bool // TODO(mdempsky): Remove.
+	idx pkgbits.Index
 }
 
 // A typeInfo represents a reference to an encoded Go type.
@@ -868,7 +867,6 @@ func (w *writer) objDict(obj types2.Object, dict *writerDict) {
 	w.Len(nderived)
 	for _, typ := range dict.derived {
 		w.Reloc(pkgbits.RelocType, typ.idx)
-		w.Bool(typ.needed)
 	}
 
 	// Write runtime dictionary information.
