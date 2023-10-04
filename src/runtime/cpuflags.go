@@ -20,15 +20,3 @@ const (
 
 	offsetMIPS64XHasMSA = unsafe.Offsetof(cpu.MIPS64X.HasMSA)
 )
-
-var (
-	// Set in runtime.cpuinit.
-	// TODO: deprecate these; use internal/cpu directly.
-	x86HasPOPCNT bool
-	x86HasSSE41  bool
-	x86HasFMA    bool
-
-	armHasVFPv4 bool
-
-	arm64HasATOMICS bool
-)

@@ -140,11 +140,11 @@ func InitConfig() {
 	ir.Syms.Racewriterange = typecheck.LookupRuntimeFunc("racewriterange")
 	ir.Syms.WBZero = typecheck.LookupRuntimeFunc("wbZero")
 	ir.Syms.WBMove = typecheck.LookupRuntimeFunc("wbMove")
-	ir.Syms.X86HasPOPCNT = typecheck.LookupRuntimeVar("x86HasPOPCNT")       // bool
-	ir.Syms.X86HasSSE41 = typecheck.LookupRuntimeVar("x86HasSSE41")         // bool
-	ir.Syms.X86HasFMA = typecheck.LookupRuntimeVar("x86HasFMA")             // bool
-	ir.Syms.ARMHasVFPv4 = typecheck.LookupRuntimeVar("armHasVFPv4")         // bool
-	ir.Syms.ARM64HasATOMICS = typecheck.LookupRuntimeVar("arm64HasATOMICS") // bool
+	ir.Syms.X86HasPOPCNT = &obj.LSym{Pkg: "internal/cpu", Name: "X86", P: []byte("HasPOPCNT")} // bool
+	ir.Syms.X86HasSSE41 = &obj.LSym{Pkg: "internal/cpu", Name: "X86.HasSSE41"}                 // bool
+	ir.Syms.X86HasFMA = &obj.LSym{Pkg: "internal/cpu", Name: "X86.HasFMA"}                     // bool
+	ir.Syms.ARMHasVFPv4 = &obj.LSym{Pkg: "internal/cpu", Name: "ARM.HasVFPv4"}                 // bool
+	ir.Syms.ARM64HasATOMICS = &obj.LSym{Pkg: "internal/cpu", Name: "ARM64.HasATOMICS"}         // bool
 	ir.Syms.Staticuint64s = typecheck.LookupRuntimeVar("staticuint64s")
 	ir.Syms.Typedmemmove = typecheck.LookupRuntimeFunc("typedmemmove")
 	ir.Syms.Udiv = typecheck.LookupRuntimeVar("udiv")                 // asm func with special ABI

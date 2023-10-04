@@ -226,11 +226,6 @@ var runtimeDecls = [...]struct {
 	{"libfuzzerHookStrCmp", funcTag, 151},
 	{"libfuzzerHookEqualFold", funcTag, 151},
 	{"addCovMeta", funcTag, 153},
-	{"x86HasPOPCNT", varTag, 6},
-	{"x86HasSSE41", varTag, 6},
-	{"x86HasFMA", varTag, 6},
-	{"armHasVFPv4", varTag, 6},
-	{"arm64HasATOMICS", varTag, 6},
 	{"asanregisterglobals", funcTag, 122},
 }
 
