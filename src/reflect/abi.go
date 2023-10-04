@@ -176,6 +176,7 @@ func (a *abiSeq) addRcvr(rcvr *abi.Type) (*abiStep, bool) {
 		// in the reflect package which only conditionally added
 		// a pointer bit to the reflect.(Value).Call stack frame's
 		// GC bitmap.
+		panic("f")
 		ok = a.assignIntN(0, goarch.PtrSize, 1, 0b0)
 		ptr = false
 	}
