@@ -52,6 +52,7 @@ TEXT cmpbody<>(SB),NOSPLIT,$0-0
 #else
 	JMP	big_loop_avx2
 #endif
+PCALIGN $16
 loop:
 	CMPQ	R8, $16
 	JBE	_0through16
@@ -161,6 +162,7 @@ allsame:
 
 	// this works for >= 64 bytes of data.
 #ifndef hasAVX2
+PCALIGN $16
 big_loop:
 	MOVOU	(SI), X0
 	MOVOU	(DI), X1
@@ -200,6 +202,7 @@ big_loop:
 
 	// Compare 64-bytes per loop iteration.
 	// Loop is unrolled and uses AVX2.
+PCALIGN $32
 big_loop_avx2:
 	VMOVDQU	(SI), Y2
 	VMOVDQU	(DI), Y3
