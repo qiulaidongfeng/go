@@ -33,7 +33,6 @@ func squares(n int) Seq2[int, int64] {
 }
 
 func TestPull(t *testing.T) {
-
 	for end := 0; end <= 3; end++ {
 		t.Run(fmt.Sprint(end), func(t *testing.T) {
 			ng := runtime.NumGoroutine()
@@ -113,6 +112,28 @@ func TestPull2(t *testing.T) {
 			stop()
 			stop()
 			wantNG(0)
+		})
+	}
+}
+
+func BenchmarkPull(b *testing.B) {
+	for _, n := range []int{1, 10, 100, 1000, 10000} {
+		b.Run(fmt.Sprint(n), func(b *testing.B) {
+			for i := 0; i < b.N; i++ {
+				_, stop := Pull(count(n))
+				stop()
+			}
+		})
+	}
+}
+
+func BenchmarkPull2(b *testing.B) {
+	for _, n := range []int{1, 10, 100, 1000, 10000} {
+		b.Run(fmt.Sprint(n), func(b *testing.B) {
+			for i := 0; i < b.N; i++ {
+				_, stop := Pull2(squares(n))
+				stop()
+			}
 		})
 	}
 }

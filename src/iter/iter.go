@@ -54,47 +54,47 @@ func coroswitch(*coro)
 // It is an error to call next or stop from multiple goroutines
 // simultaneously.
 func Pull[V any](seq Seq[V]) (next func() (V, bool), stop func()) {
-	var (
+	var this struct {
 		v     V
 		ok    bool
 		done  bool
 		racer int
-	)
+	}
 	c := newcoro(func(c *coro) {
-		race.Acquire(unsafe.Pointer(&racer))
+		race.Acquire(unsafe.Pointer(&this.racer))
 		yield := func(v1 V) bool {
-			if done {
+			if this.done {
 				return false
 			}
-			v, ok = v1, true
-			race.Release(unsafe.Pointer(&racer))
+			this.v, this.ok = v1, true
+			race.Release(unsafe.Pointer(&this.racer))
 			coroswitch(c)
-			race.Acquire(unsafe.Pointer(&racer))
-			return !done
+			race.Acquire(unsafe.Pointer(&this.racer))
+			return !this.done
 		}
 		seq(yield)
 		var v0 V
-		v, ok = v0, false
-		done = true
-		race.Release(unsafe.Pointer(&racer))
+		this.v, this.ok = v0, false
+		this.done = true
+		race.Release(unsafe.Pointer(&this.racer))
 	})
 	next = func() (v1 V, ok1 bool) {
-		race.Write(unsafe.Pointer(&racer)) // detect races
-		if done {
+		race.Write(unsafe.Pointer(&this.racer)) // detect races
+		if this.done {
 			return
 		}
-		race.Release(unsafe.Pointer(&racer))
+		race.Release(unsafe.Pointer(&this.racer))
 		coroswitch(c)
-		race.Acquire(unsafe.Pointer(&racer))
-		return v, ok
+		race.Acquire(unsafe.Pointer(&this.racer))
+		return this.v, this.ok
 	}
 	stop = func() {
-		race.Write(unsafe.Pointer(&racer)) // detect races
-		if !done {
-			done = true
-			race.Release(unsafe.Pointer(&racer))
+		race.Write(unsafe.Pointer(&this.racer)) // detect races
+		if !this.done {
+			this.done = true
+			race.Release(unsafe.Pointer(&this.racer))
 			coroswitch(c)
-			race.Acquire(unsafe.Pointer(&racer))
+			race.Acquire(unsafe.Pointer(&this.racer))
 		}
 	}
 	return next, stop
@@ -120,49 +120,49 @@ func Pull[V any](seq Seq[V]) (next func() (V, bool), stop func()) {
 // It is an error to call next or stop from multiple goroutines
 // simultaneously.
 func Pull2[K, V any](seq Seq2[K, V]) (next func() (K, V, bool), stop func()) {
-	var (
+	var this struct {
 		k     K
 		v     V
 		ok    bool
 		done  bool
 		racer int
-	)
+	}
 	c := newcoro(func(c *coro) {
-		race.Acquire(unsafe.Pointer(&racer))
+		race.Acquire(unsafe.Pointer(&this.racer))
 		yield := func(k1 K, v1 V) bool {
-			if done {
+			if this.done {
 				return false
 			}
-			k, v, ok = k1, v1, true
-			race.Release(unsafe.Pointer(&racer))
+			this.k, this.v, this.ok = k1, v1, true
+			race.Release(unsafe.Pointer(&this.racer))
 			coroswitch(c)
-			race.Acquire(unsafe.Pointer(&racer))
-			return !done
+			race.Acquire(unsafe.Pointer(&this.racer))
+			return !this.done
 		}
 		seq(yield)
 		var k0 K
 		var v0 V
-		k, v, ok = k0, v0, false
-		done = true
-		race.Release(unsafe.Pointer(&racer))
+		this.k, this.v, this.ok = k0, v0, false
+		this.done = true
+		race.Release(unsafe.Pointer(&this.racer))
 	})
 	next = func() (k1 K, v1 V, ok1 bool) {
-		race.Write(unsafe.Pointer(&racer)) // detect races
-		if done {
+		race.Write(unsafe.Pointer(&this.racer)) // detect races
+		if this.done {
 			return
 		}
-		race.Release(unsafe.Pointer(&racer))
+		race.Release(unsafe.Pointer(&this.racer))
 		coroswitch(c)
-		race.Acquire(unsafe.Pointer(&racer))
-		return k, v, ok
+		race.Acquire(unsafe.Pointer(&this.racer))
+		return this.k, this.v, this.ok
 	}
 	stop = func() {
-		race.Write(unsafe.Pointer(&racer)) // detect races
-		if !done {
-			done = true
-			race.Release(unsafe.Pointer(&racer))
+		race.Write(unsafe.Pointer(&this.racer)) // detect races
+		if !this.done {
+			this.done = true
+			race.Release(unsafe.Pointer(&this.racer))
 			coroswitch(c)
-			race.Acquire(unsafe.Pointer(&racer))
+			race.Acquire(unsafe.Pointer(&this.racer))
 		}
 	}
 	return next, stop
