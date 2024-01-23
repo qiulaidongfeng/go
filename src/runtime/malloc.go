@@ -965,6 +965,8 @@ func (c *mcache) nextFree(spc spanClass) (v gclinkptr, s *mspan, shouldhelpgc bo
 	return
 }
 
+const bumpPtrEnable = true
+
 // Allocate an object of size bytes.
 // Small objects are allocated from the per-P cache's free lists.
 // Large objects (> 32 kB) are allocated straight from the heap.
@@ -1033,6 +1035,12 @@ func mallocgc(size uintptr, typ *_type, needzero bool) unsafe.Pointer {
 		throw("malloc during signal")
 	}
 	mp.mallocing = 1
+
+	if bumpPtrEnable {
+		p := mp.p.ptr()
+		ret := p.bumpPtr.Alloc(size, typ)
+		return ret
+	}
 
 	shouldhelpgc := false
 	dataSize := userSize
