@@ -608,6 +608,17 @@ var execTests = []execTest{
 	{"i, c = range iter.Seq2[int,int]", `{{$i := 0}}{{$c := 0}}{{range $i, $c = .}}{{$i}}{{$c}}{{end}}`, "0112", fVal2, true},
 	{"i = range iter.Seq2[int,int]", `{{$i := 0}}{{range $i = .}}{{$i}}{{end}}`, "01", fVal2, true},
 	{"i := range iter.Seq2[int,int]", `{{range $i := .}}{{$i}}{{end}}`, "01", fVal2, true},
+	{"range int8", `{{$Value := .Value}}{{range $v := .I}}{{call $Value $v}}{{end}}`, "01234", rangeTestData[int8](), true},
+	{"range int16", `{{$Value := .Value}}{{range $v := .I}}{{call $Value $v}}{{end}}`, "01234", rangeTestData[int16](), true},
+	{"range int32", `{{$Value := .Value}}{{range $v := .I}}{{call $Value $v}}{{end}}`, "01234", rangeTestData[int32](), true},
+	{"range int64", `{{$Value := .Value}}{{range $v := .I}}{{call $Value $v}}{{end}}`, "01234", rangeTestData[int64](), true},
+	{"range int", `{{$Value := .Value}}{{range $v := .I}}{{call $Value $v}}{{end}}`, "01234", rangeTestData[int](), true},
+	{"range uint8", `{{$Value := .Value}}{{range $v := .I}}{{call $Value $v}}{{end}}`, "01234", rangeTestData[uint8](), true},
+	{"range uint16", `{{$Value := .Value}}{{range $v := .I}}{{call $Value $v}}{{end}}`, "01234", rangeTestData[uint16](), true},
+	{"range uint32", `{{$Value := .Value}}{{range $v := .I}}{{call $Value $v}}{{end}}`, "01234", rangeTestData[uint32](), true},
+	{"range uint64", `{{$Value := .Value}}{{range $v := .I}}{{call $Value $v}}{{end}}`, "01234", rangeTestData[uint64](), true},
+	{"range uint", `{{$Value := .Value}}{{range $v := .I}}{{call $Value $v}}{{end}}`, "01234", rangeTestData[uint](), true},
+	{"range uintptr", `{{$Value := .Value}}{{range $v := .I}}{{call $Value $v}}{{end}}`, "01234", rangeTestData[uintptr](), true},
 
 	// Cute examples.
 	{"or as if true", `{{or .SI "slice is empty"}}`, "[3 4 5]", tVal, true},
@@ -725,6 +736,16 @@ func fVal2(yield func(int, int) bool) {
 		if !yield(i, i+1) {
 			break
 		}
+	}
+}
+
+func rangeTestData[T int | int8 | int16 | int32 | int64 | uint | uint8 | uint16 | uint32 | uint64 | uintptr]() any {
+	return struct {
+		I     T
+		Value func(T) T
+	}{
+		I:     T(5),
+		Value: func(v T) T { return v },
 	}
 }
 
