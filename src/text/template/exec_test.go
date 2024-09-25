@@ -613,19 +613,19 @@ var execTests = []execTest{
 	{"i,x range iter.Seq[int]", `{{$i := 0}}{{$x := 0}}{{range $i = .}}{{$i}}{{end}}`, "01", fVal1(2), true},
 	{"range iter.Seq[int] else", `{{range $i := .}}{{$i}}{{else}}empty{{end}}`, "empty", fVal1(0), true},
 	{"range iter.Seq2[int,int] else", `{{range $i := .}}{{$i}}{{else}}empty{{end}}`, "empty", fVal2(0), true},
-	{"range int8", `{{$Value := .Value}}{{range $v := .I}}{{call $Value $v}}{{end}}`, "01234", rangeTestData[int8](), true},
-	{"range int16", `{{$Value := .Value}}{{range $v := .I}}{{call $Value $v}}{{end}}`, "01234", rangeTestData[int16](), true},
-	{"range int32", `{{$Value := .Value}}{{range $v := .I}}{{call $Value $v}}{{end}}`, "01234", rangeTestData[int32](), true},
-	{"range int64", `{{$Value := .Value}}{{range $v := .I}}{{call $Value $v}}{{end}}`, "01234", rangeTestData[int64](), true},
-	{"range int", `{{$Value := .Value}}{{range $v := .I}}{{call $Value $v}}{{end}}`, "01234", rangeTestData[int](), true},
-	{"range uint8", `{{$Value := .Value}}{{range $v := .I}}{{call $Value $v}}{{end}}`, "01234", rangeTestData[uint8](), true},
-	{"range uint16", `{{$Value := .Value}}{{range $v := .I}}{{call $Value $v}}{{end}}`, "01234", rangeTestData[uint16](), true},
-	{"range uint32", `{{$Value := .Value}}{{range $v := .I}}{{call $Value $v}}{{end}}`, "01234", rangeTestData[uint32](), true},
-	{"range uint64", `{{$Value := .Value}}{{range $v := .I}}{{call $Value $v}}{{end}}`, "01234", rangeTestData[uint64](), true},
-	{"range uint", `{{$Value := .Value}}{{range $v := .I}}{{call $Value $v}}{{end}}`, "01234", rangeTestData[uint](), true},
-	{"range uintptr", `{{$Value := .Value}}{{range $v := .I}}{{call $Value $v}}{{end}}`, "01234", rangeTestData[uintptr](), true},
-	{"range uintptr(0)", `{{$Value := .Value}}{{range $v := .I}}{{call $Value $v}}{{else}}empty{{end}}`, "empty", rangeTestData[uintptr](0), true},
-	{"range 5", `{{$Value := .Value}}{{range $v := 5}}{{call $Value $v}}{{end}}`, "01234", rangeTestData[int](), true},
+	{"range int8", rangeTestInt, rangeTestData[int8](), int8(5), true},
+	{"range int16", rangeTestInt, rangeTestData[int16](), int16(5), true},
+	{"range int32", rangeTestInt, rangeTestData[int32](), int32(5), true},
+	{"range int64", rangeTestInt, rangeTestData[int64](), int64(5), true},
+	{"range int", rangeTestInt, rangeTestData[int](), int(5), true},
+	{"range uint8", rangeTestInt, rangeTestData[uint8](), uint8(5), true},
+	{"range uint16", rangeTestInt, rangeTestData[uint16](), uint16(5), true},
+	{"range uint32", rangeTestInt, rangeTestData[uint32](), uint32(5), true},
+	{"range uint64", rangeTestInt, rangeTestData[uint64](), uint64(5), true},
+	{"range uint", rangeTestInt, rangeTestData[uint](), uint(5), true},
+	{"range uintptr", rangeTestInt, rangeTestData[uintptr](), uintptr(5), true},
+	{"range uintptr(0)", `{{range $v := .}}{{print $v}}{{else}}empty{{end}}`, "empty", uintptr(0), true},
+	{"range 5", `{{range $v := 5}}{{printf "%T%d" $v $v}}{{end}}`, rangeTestData[int](), nil, true},
 
 	// Cute examples.
 	{"or as if true", `{{or .SI "slice is empty"}}`, "[3 4 5]", tVal, true},
@@ -750,18 +750,15 @@ func fVal2(i int) iter.Seq2[int, int] {
 	}
 }
 
-func rangeTestData[T int | int8 | int16 | int32 | int64 | uint | uint8 | uint16 | uint32 | uint64 | uintptr](v ...T) any {
+const rangeTestInt = `{{range $v := .}}{{printf "%T%d" $v $v}}{{end}}`
+
+func rangeTestData[T int | int8 | int16 | int32 | int64 | uint | uint8 | uint16 | uint32 | uint64 | uintptr]() string {
 	I := T(5)
-	if len(v) != 0 {
-		I = v[0]
+	var buf strings.Builder
+	for i := T(0); i < I; i++ {
+		buf.WriteString(fmt.Sprintf("%T%d", i, i))
 	}
-	return struct {
-		I     T
-		Value func(T) T
-	}{
-		I:     I,
-		Value: func(v T) T { return v },
-	}
+	return buf.String()
 }
 
 func zeroArgs() string {
